@@ -62,7 +62,12 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
                 newTextButton.addEventListener('click', () => this.newSlideHandler('text'));
                 newTitleButton.addEventListener('click', () => this.newSlideHandler('title'));
             }
+
+            addEventListener(events.stateChangeName, this.handleAppStateChanges as any);
         }
+    }
+    disconnectedCallback() {
+        removeEventListener(events.stateChangeName, this.handleAppStateChanges as any);
     }
     private newSlideHandler = (type: models.SlideType) => {
         this.nextUniqueId++;
@@ -140,5 +145,22 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
             </div>
         </div>
         `;
+    }
+    private handleAppStateChanges = (e: { detail: events.AnyEvent }) => {
+        if(e.detail.type === 'slide_update') {
+            var detail = e.detail;
+            var affectedSlide = this.slides.find(s => s.id === detail.id);
+
+            if(affectedSlide)
+                affectedSlide.content = detail.newContent;
+
+            if(this.shadowRoot) {
+                var slideContent = this.shadowRoot.querySelector(`.slide[data-id='${detail.id}'] .slideContent`);
+
+                if(slideContent) {
+                    slideContent.innerHTML = detail.newContent // always run this through sanitize in a prod app.
+                }
+            }
+        }
     }
 })
