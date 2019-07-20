@@ -8,6 +8,7 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
     currentSlide: models.Slide | null = null;
     private nextUniqueId = 0;
     private imageCount = 0;
+    private deleteCount = 0;
 
     constructor() {
         super(`
@@ -49,6 +50,7 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
             <button id='newTextButton' class='button'>NEW TEXT SLIDE</button>
             <button id='newImageButton' class='button'>NEW IMAGE SLIDE</button>
             <input type='file' style='display: none' id='filePicker'/>
+            <button id='deleteButton' class='button'>DELETE LAST SLIDE</button>
         </div>
         `);
     }
@@ -59,12 +61,14 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
             var newTextButton = this.shadowRoot.querySelector('#newTextButton');
             var newTitleButton = this.shadowRoot.querySelector('#newTitleButton');
             var filePicker = this.shadowRoot.querySelector('#filePicker');
+            var deleteButton = this.shadowRoot.querySelector('#deleteButton');
 
-            if(newImageButton && newTextButton && newTitleButton && filePicker) {
+            if(newImageButton && newTextButton && newTitleButton && filePicker && deleteButton) {
                 newImageButton.addEventListener('click', () => this.displayFilePicker());
                 newTextButton.addEventListener('click', () => this.newSlideHandler('text'));
                 newTitleButton.addEventListener('click', () => this.newSlideHandler('title'));
                 filePicker.addEventListener('input', () => this.newSlideHandler('image'));
+                deleteButton.addEventListener('click', () => this.deleteClicked());
             }
 
             addEventListener(events.stateChangeName, this.handleAppStateChanges as any);
@@ -128,6 +132,37 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
 
             if(filePicker)
                 filePicker.click();
+        }
+    }
+    private deleteClicked() {
+        this.deleteCount++;
+
+        switch(this.deleteCount) {
+            case 1:
+                alert('No.');
+                break;
+            case 2:
+                alert('I said no.');
+                break;
+            case 3:
+                alert(`You know what?  I'm disabling the button.`);
+                if(this.shadowRoot) {
+                    var deleteButton = this.shadowRoot.querySelector('#deleteButton') as HTMLInputElement;
+
+                    if(deleteButton) {
+                        deleteButton.disabled = true;
+
+                        setTimeout(() => {
+                            alert('...Fine! Quit your whining!');
+                            confirm('So you want to delete that picture?');
+                            confirm(`You're saying you didn't like it?`);
+                            confirm(`Ok so you want me to delete everything?`);
+                            alert(`...Ok!  If that's what you want!`);
+                            window.location.reload();
+                        }, 15000)
+                    }
+                }
+                break;
         }
     }
     private updateCurrentSlide(s: models.Slide | null) {
