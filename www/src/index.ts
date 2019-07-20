@@ -1,6 +1,7 @@
 import { message, environmentName } from './constants.js';
 import * as styles from './styles.js';
 import { BaseWebComponent } from '../ts_modules/@depinore/wclibrary/BaseWebComponent.js'
+import { Slide } from './models.js';
 
 // component imports go here
 import './ppt-sidebar.js';
