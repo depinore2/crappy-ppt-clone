@@ -1,1 +1,5 @@
-export type Slide = { id: string, type: 'title' | 'text' | 'image', content: string }
+export type SlideType = 'title' | 'text' | 'image';
+
+// DATA BEGIN
+export type Slide = { id: string, type: SlideType, content: string }
+// DATA END
