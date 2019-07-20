@@ -26,10 +26,4 @@ export const slideStyles = `
         font-size: 6pt;
     }
     /* End Text Slide Variant */
-
-    /* Disabled Slide Variant */
-    .slide.slide--disabled {
-        background-color: transparent;
-    }
-    /* End Disabled Slide Variant */
 `

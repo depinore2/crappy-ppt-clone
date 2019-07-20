@@ -7,7 +7,7 @@ export type AppEvent = { type: EventType }
 export type NewSlideEvent = AppEvent & { type: 'slide_new'; slideType: models.SlideType }
 export type UpdateSlideEvent = AppEvent & { type: 'slide_update'; id: string; newContent: string; }
 export type DeleteSlideEvent = AppEvent & { type: 'slide_delete'; id: string; }
-export type SelectSlideEvent = AppEvent & { type: 'slide_select'; id: string; }
+export type SelectSlideEvent = AppEvent & { type: 'slide_select'; slide: models.Slide | null }
 
 export type AnyEvent = NewSlideEvent | UpdateSlideEvent | DeleteSlideEvent | SelectSlideEvent;
 // END TYPES
@@ -18,7 +18,7 @@ export const stateChangeName = 'ppt-StateChange'
 
 // BEGIN FUNCTIONS
 export function newStateEvent(info: AnyEvent) {
-    return new CustomEvent(stateChangeName, info as any);
+    return new CustomEvent(stateChangeName, { detail: info });
 }
 
 // END FUNCTIONS
