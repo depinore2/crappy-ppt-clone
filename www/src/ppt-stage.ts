@@ -22,7 +22,7 @@ customElements.define('ppt-stage', class extends BaseWebComponent {
     private updateSlide() {
         if(this.currentSlide) {
             this.render(`
-                <ppt-slide data-slide='${this.sanitize(JSON.stringify(this.currentSlide))}'></ppt-slide>
+                <ppt-slide data-slide='${JSON.stringify(this.currentSlide)}'></ppt-slide>
             `)
         }
         else {

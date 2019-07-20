@@ -57,7 +57,7 @@ customElements.define(`ppt-slide`, class extends BaseWebComponent {
                         slideContent.innerHTML = this.sanitize(this.currentSlide.content);
                         break;
                     case 'image':
-                        slideContent.innerHTML = `<img class='bigImage' src='${this.sanitize(this.currentSlide.content)}' />`
+                        slideContent.innerHTML = `<img src='${this.currentSlide.content}' width='100%' height='100%'/>`
                         break;
                 }
             }

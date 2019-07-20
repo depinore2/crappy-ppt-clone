@@ -7,6 +7,7 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
     slides: models.Slide[] = [];
     currentSlide: models.Slide | null = null;
     private nextUniqueId = 0;
+    private imageCount = 0;
 
     constructor() {
         super(`
@@ -47,6 +48,7 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
             <button id='newTitleButton' class='button'>NEW TITLE SLIDE</button>
             <button id='newTextButton' class='button'>NEW TEXT SLIDE</button>
             <button id='newImageButton' class='button'>NEW IMAGE SLIDE</button>
+            <input type='file' style='display: none' id='filePicker'/>
         </div>
         `);
     }
@@ -56,11 +58,13 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
             var newImageButton = this.shadowRoot.querySelector('#newImageButton');
             var newTextButton = this.shadowRoot.querySelector('#newTextButton');
             var newTitleButton = this.shadowRoot.querySelector('#newTitleButton');
+            var filePicker = this.shadowRoot.querySelector('#filePicker');
 
-            if(newImageButton && newTextButton && newTitleButton) {
-                newImageButton.addEventListener('click', () => this.newSlideHandler('image'));
+            if(newImageButton && newTextButton && newTitleButton && filePicker) {
+                newImageButton.addEventListener('click', () => this.displayFilePicker());
                 newTextButton.addEventListener('click', () => this.newSlideHandler('text'));
                 newTitleButton.addEventListener('click', () => this.newSlideHandler('title'));
+                filePicker.addEventListener('input', () => this.newSlideHandler('image'));
             }
 
             addEventListener(events.stateChangeName, this.handleAppStateChanges as any);
@@ -71,10 +75,13 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
     }
     private newSlideHandler = (type: models.SlideType) => {
         this.nextUniqueId++;
-
-        var slideContent = (function() {
+        
+        var slideContent = (() => {
             switch(type) {
-                case 'image': return '';
+                case 'image': 
+                    this.displayFilePicker();
+                    this.imageCount++;
+                    return `/img/trump${this.imageCount}.jpg`;
                 case 'text': return 'New text slide.';
                 case 'title': return 'New title slide..';
             }
@@ -115,6 +122,14 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
                 
         }
     }
+    private displayFilePicker() {
+        if(this.shadowRoot) {
+            var filePicker = this.shadowRoot.querySelector('#filePicker') as HTMLElement;
+
+            if(filePicker)
+                filePicker.click();
+        }
+    }
     private updateCurrentSlide(s: models.Slide | null) {
         this.currentSlide = s;
 
@@ -141,7 +156,11 @@ customElements.define('ppt-sidebar', class extends BaseWebComponent {
         return `
         <div class='slide slide--${this.sanitize(slide.type)}' data-id='${this.sanitize(slide.id)}'>
             <div class='slideContent'>
-                ${this.sanitize(slide.content)}
+                ${
+                    slide.type === 'image'
+                    ? `<img src='${slide.content}' height='100%' width='100%' />`
+                    : slide.content
+                }
             </div>
         </div>
         `;
